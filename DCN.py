@@ -15,8 +15,8 @@ from tensorflow.contrib.layers.python.layers import batch_norm as batch_norm
 from yellowfin import YFOptimizer
 
 
-class DeepFM(BaseEstimator, TransformerMixin):
-    def __init__(self, feature_size, field_size,
+class DCN(BaseEstimator, TransformerMixin):
+    def __init__(self, cate_feature_size, cate_field_size, num_field_size,
                  embedding_size=8, dropout_fm=[1.0, 1.0],
                  deep_layers=[32, 32], dropout_deep=[0.5, 0.5, 0.5],
                  deep_layers_activation=tf.nn.relu,
@@ -24,22 +24,23 @@ class DeepFM(BaseEstimator, TransformerMixin):
                  learning_rate=0.001, optimizer_type="adam",
                  batch_norm=0, batch_norm_decay=0.995,
                  verbose=False, random_seed=2016,
-                 use_fm=True, use_deep=True,
+                 use_cross=True, use_deep=True,
                  loss_type="logloss", eval_metric=roc_auc_score,
                  l2_reg=0.0, greater_is_better=True):
-        assert (use_fm or use_deep)
+        assert (use_cross or use_deep)
         assert loss_type in ["logloss", "mse"], \
             "loss_type can be either 'logloss' for classification task or 'mse' for regression task"
 
-        self.feature_size = feature_size        # denote as M, size of the feature dictionary
-        self.field_size = field_size            # denote as F, size of the feature fields
-        self.embedding_size = embedding_size    # denote as K, size of the feature embedding
+        self.cate_feature_size = cate_feature_size        # denote as M, size of all cate nums
+        self.cate_field_size = cate_field_size            # denote as F, size of cate
+        self.num_field_size = num_field_size              # size of num
+        self.embedding_size = embedding_size              # denote as K, size of the feature embedding
 
         self.dropout_fm = dropout_fm
         self.deep_layers = deep_layers
         self.dropout_deep = dropout_deep
         self.deep_layers_activation = deep_layers_activation
-        self.use_fm = use_fm
+        self.use_cross = use_cross
         self.use_deep = use_deep
         self.l2_reg = l2_reg
 
@@ -204,9 +205,9 @@ class DeepFM(BaseEstimator, TransformerMixin):
                 dtype=np.float32)  # 1 * layer[i]
 
         # final concat projection layer
-        if self.use_fm and self.use_deep:
+        if self.use_cross and self.use_deep:
             input_size = self.field_size + self.embedding_size + self.deep_layers[-1]
-        elif self.use_fm:
+        elif self.use_cross:
             input_size = self.field_size + self.embedding_size
         elif self.use_deep:
             input_size = self.deep_layers[-1]
