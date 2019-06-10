@@ -17,7 +17,8 @@ from yellowfin import YFOptimizer
 
 class DCN(BaseEstimator, TransformerMixin):
     def __init__(self, cate_feature_size, cate_field_size, num_field_size,
-                 embedding_size=8, dropout_fm=[1.0, 1.0],
+                 embedding_size=8, dropout_cross=[1.0, 1.0],
+                 cross_layer_num=2,
                  deep_layers=[32, 32], dropout_deep=[0.5, 0.5, 0.5],
                  deep_layers_activation=tf.nn.relu,
                  epoch=10, batch_size=256,
@@ -35,10 +36,12 @@ class DCN(BaseEstimator, TransformerMixin):
         self.cate_field_size = cate_field_size            # denote as F, size of cate
         self.num_field_size = num_field_size              # size of num
         self.embedding_size = embedding_size              # denote as K, size of the feature embedding
+        self.total_size = self.num_field_size + self.cate_field_size * self.embedding_size
 
-        self.dropout_fm = dropout_fm
+        self.dropout_cross = dropout_cross
         self.deep_layers = deep_layers
         self.dropout_deep = dropout_deep
+        self.cross_layer_num = cross_layer_num
         self.deep_layers_activation = deep_layers_activation
         self.use_cross = use_cross
         self.use_deep = use_deep
@@ -82,26 +85,8 @@ class DCN(BaseEstimator, TransformerMixin):
             # model
             self.embeddings = tf.nn.embedding_lookup(self.weights["feature_embeddings"],
                                                              self.feat_index)  # None * F * K
-            feat_value = tf.reshape(self.feat_value, shape=[-1, self.field_size, 1])
+            feat_value = tf.reshape(self.feat_value, shape=[-1, self.cate_field_size, 1])
             self.embeddings = tf.multiply(self.embeddings, feat_value)
-
-            # ---------- first order term ----------
-            self.y_first_order = tf.nn.embedding_lookup(self.weights["feature_bias"], self.feat_index) # None * F * 1
-            self.y_first_order = tf.reduce_sum(tf.multiply(self.y_first_order, feat_value), 2)  # None * F
-            self.y_first_order = tf.nn.dropout(self.y_first_order, self.dropout_keep_fm[0]) # None * F
-
-            # ---------- second order term ---------------
-            # sum_square part
-            self.summed_features_emb = tf.reduce_sum(self.embeddings, 1)  # None * K
-            self.summed_features_emb_square = tf.square(self.summed_features_emb)  # None * K
-
-            # square_sum part
-            self.squared_features_emb = tf.square(self.embeddings)
-            self.squared_sum_features_emb = tf.reduce_sum(self.squared_features_emb, 1)  # None * K
-
-            # second order
-            self.y_second_order = 0.5 * tf.subtract(self.summed_features_emb_square, self.squared_sum_features_emb)  # None * K
-            self.y_second_order = tf.nn.dropout(self.y_second_order, self.dropout_keep_fm[1])  # None * K
 
             # ---------- Deep component ----------
             self.y_deep = tf.reshape(self.embeddings, shape=[-1, self.field_size * self.embedding_size]) # None * (F*K)
@@ -182,33 +167,43 @@ class DCN(BaseEstimator, TransformerMixin):
 
         # embeddings
         weights["feature_embeddings"] = tf.Variable(
-            tf.random_normal([self.feature_size, self.embedding_size], 0.0, 0.01),
+            tf.random_normal([self.cate_feature_size, self.embedding_size], 0.0, 0.01),
             name="feature_embeddings")  # feature_size * K
         weights["feature_bias"] = tf.Variable(
-            tf.random_uniform([self.feature_size, 1], 0.0, 1.0), name="feature_bias")  # feature_size * 1
+            tf.random_uniform([self.cate_feature_size, 1], 0.0, 1.0), name="feature_bias")  # feature_size * 1
 
         # deep layers
         num_layer = len(self.deep_layers)
-        input_size = self.field_size * self.embedding_size
+        # input_size = self.field_size * self.embedding_size
+        input_size = self.total_size
         glorot = np.sqrt(2.0 / (input_size + self.deep_layers[0]))
         weights["layer_0"] = tf.Variable(
             np.random.normal(loc=0, scale=glorot, size=(input_size, self.deep_layers[0])), dtype=np.float32)
         weights["bias_0"] = tf.Variable(np.random.normal(loc=0, scale=glorot, size=(1, self.deep_layers[0])),
                                                         dtype=np.float32)  # 1 * layers[0]
         for i in range(1, num_layer):
-            glorot = np.sqrt(2.0 / (self.deep_layers[i-1] + self.deep_layers[i]))
+            glorot_deep = np.sqrt(2.0 / (self.deep_layers[i-1] + self.deep_layers[i]))
             weights["layer_%d" % i] = tf.Variable(
-                np.random.normal(loc=0, scale=glorot, size=(self.deep_layers[i-1], self.deep_layers[i])),
+                np.random.normal(loc=0, scale=glorot_deep, size=(self.deep_layers[i-1], self.deep_layers[i])),
                 dtype=np.float32)  # layers[i-1] * layers[i]
             weights["bias_%d" % i] = tf.Variable(
-                np.random.normal(loc=0, scale=glorot, size=(1, self.deep_layers[i])),
+                np.random.normal(loc=0, scale=glorot_deep, size=(1, self.deep_layers[i])),
+                dtype=np.float32)  # 1 * layer[i]
+
+        for i in range(self.cross_layer_num):
+            glorot_cross = np.sqrt(2.0 / (self.total_size + self.total_size))
+            weights["cross_layer_%d" % i] = tf.Variable(
+                np.random.normal(loc=0, scale=glorot_cross, size=(self.total_size, 1)),
+                dtype=np.float32)
+            weights["cross_bias_%d" % i] = tf.Variable(
+                np.random.normal(loc=0, scale=glorot_cross, size=(self.total_size, 1)),
                 dtype=np.float32)  # 1 * layer[i]
 
         # final concat projection layer
         if self.use_cross and self.use_deep:
-            input_size = self.field_size + self.embedding_size + self.deep_layers[-1]
+            input_size = self.total_size + self.deep_layers[-1]
         elif self.use_cross:
-            input_size = self.field_size + self.embedding_size
+            input_size = self.total_size
         elif self.use_deep:
             input_size = self.deep_layers[-1]
         glorot = np.sqrt(2.0 / (input_size + 1))

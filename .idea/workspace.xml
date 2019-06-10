@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6a1d3a5a-f03f-4bb5-ab7b-43ac5e4fcfb8" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DeepFM.py" beforeDir="false" afterPath="$PROJECT_DIR$/DCN.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/example/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DCN.py" beforeDir="false" afterPath="$PROJECT_DIR$/DCN.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,8 +15,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/example/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="366">
-              <caret line="85" column="30" selection-start-line="85" selection-start-column="16" selection-end-line="85" selection-end-column="30" />
+            <state relative-caret-position="670">
+              <caret line="72" column="95" selection-start-line="72" selection-start-column="87" selection-end-line="72" selection-end-column="95" />
               <folding>
                 <element signature="e#1#10#0" expanded="true" />
               </folding>
@@ -29,8 +27,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/DCN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="36" column="58" selection-start-line="36" selection-start-column="58" selection-end-line="36" selection-end-column="58" />
+            <state relative-caret-position="424">
+              <caret line="88" column="70" lean-forward="true" selection-start-line="88" selection-start-column="70" selection-end-line="88" selection-end-column="70" />
               <folding>
                 <element signature="e#208#226#0" expanded="true" />
               </folding>
@@ -52,6 +50,7 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>feat_dim</find>
+      <find>weights[&quot;feature_embeddings&quot;]</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -67,10 +66,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-1448" />
-    <option name="y" value="-8" />
-    <option name="width" value="1456" />
-    <option name="height" value="876" />
+    <option name="x" value="43" />
+    <option name="y" value="198" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -149,19 +148,19 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1559746687878</updated>
-      <workItem from="1559746689078" duration="12681000" />
+      <workItem from="1559746689078" duration="18146000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="12681000" />
+    <option name="totallyTimeSpent" value="18146000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1448" y="-8" width="1456" height="876" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18982808" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.141258" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" />
@@ -199,8 +198,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/example/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="366">
-          <caret line="85" column="30" selection-start-line="85" selection-start-column="16" selection-end-line="85" selection-end-column="30" />
+        <state relative-caret-position="670">
+          <caret line="72" column="95" selection-start-line="72" selection-start-column="87" selection-end-line="72" selection-end-column="95" />
           <folding>
             <element signature="e#1#10#0" expanded="true" />
           </folding>
@@ -209,8 +208,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/DCN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="36" column="58" selection-start-line="36" selection-start-column="58" selection-end-line="36" selection-end-column="58" />
+        <state relative-caret-position="424">
+          <caret line="88" column="70" lean-forward="true" selection-start-line="88" selection-start-column="70" selection-end-line="88" selection-end-column="70" />
           <folding>
             <element signature="e#208#226#0" expanded="true" />
           </folding>
