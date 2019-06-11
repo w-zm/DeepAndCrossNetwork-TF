@@ -43,7 +43,7 @@ def _preprocess_data(train_df, test_df):
         le = preprocessing.LabelEncoder()
         all_df[i] = le.fit_transform(all_df[i])
         all_df[i] = all_df[i] + cate_cnt
-        cate_cnt += all_df[i].max() + 1
+        cate_cnt = all_df[i].max() + 1
 
     train_df = all_df[:train_df.shape[0]]
     test_df = all_df[train_df.shape[0]:].reset_index(drop=True)
@@ -74,19 +74,12 @@ def _preprocess_data(train_df, test_df):
 
 
 def _run_base_model_dfm(Xi_train, Xv_train, y_train, Xi_test, Xv_test, ids_test, cate_cnt, folds, dfm_params):
-    # fd = FeatureDictionary(dfTrain=dfTrain, dfTest=dfTest,
-    #                        numeric_cols=config.NUMERIC_COLS,
-    #                        ignore_cols=config.IGNORE_COLS)
-    # data_parser = DataParser(feat_dict=fd)
-    # Xi_train, Xv_train, y_train = data_parser.parse(df=dfTrain, has_label=True)
-    # Xi_test, Xv_test, ids_test = data_parser.parse(df=dfTest)
-
     dfm_params["cate_feature_size"] = cate_cnt
     dfm_params["cate_field_size"] = len(Xi_train[0])
     dfm_params["num_field_size"] = len(Xv_train[0])
 
     y_train_meta = np.zeros((Xi_train.shape[0], 1), dtype=float)
-    y_test_meta = np.zeros((Xi_train.shape[0], 1), dtype=float)
+    y_test_meta = np.zeros((Xi_test.shape[0], 1), dtype=float)
     _get = lambda x, l: [x[i] for i in l]
     gini_results_cv = np.zeros(len(folds), dtype=float)
     gini_results_epoch_train = np.zeros((len(folds), dfm_params["epoch"]), dtype=float)
@@ -109,9 +102,9 @@ def _run_base_model_dfm(Xi_train, Xv_train, y_train, Xi_test, Xv_test, ids_test,
 
     # save result
     if dfm_params["use_cross"] and dfm_params["use_deep"]:
-        clf_str = "DeepFM"
+        clf_str = "DeepAndCross"
     elif dfm_params["use_cross"]:
-        clf_str = "FM"
+        clf_str = "CROSS"
     elif dfm_params["use_deep"]:
         clf_str = "DNN"
     print("%s: %.5f (%.5f)"%(clf_str, gini_results_cv.mean(), gini_results_cv.std()))
@@ -148,20 +141,19 @@ def _plot_fig(train_results, valid_results, model_name):
 
 # load data & preprocess
 train_df, test_df = _load_data()
-train_df, test_df, Xi_train, Xv_train, y_train, Xi_test, Xv_test, ids_test, cat_features_indices, feature_sizes = _preprocess_data(train_df, test_df)
+train_df, test_df, Xi_train, Xv_train, y_train, Xi_test, Xv_test, ids_test, cate_cnt = _preprocess_data(train_df, test_df)
 
 # folds
 folds = list(StratifiedKFold(n_splits=config.NUM_SPLITS, shuffle=True,
                              random_state=config.RANDOM_SEED).split(Xi_train, y_train))
 
 
-# ------------------ DeepFM Model ------------------
+# ------------------ DeepAndCross Model ------------------
 # params
 dfm_params = {
     "use_cross": True,
     "use_deep": True,
     "embedding_size": 8,
-    "dropout_fm": [1.0, 1.0],
     "deep_layers": [32, 32],
     "dropout_deep": [0.5, 0.5, 0.5],
     "deep_layers_activation": tf.nn.relu,
@@ -178,7 +170,7 @@ dfm_params = {
 }
 y_train_dfm, y_test_dfm = _run_base_model_dfm(Xi_train, Xv_train, y_train, Xi_test, Xv_test, ids_test, cate_cnt, folds, dfm_params)
 
-# # ------------------ FM Model ------------------
+# # ------------------ CROSS Model ------------------
 # fm_params = dfm_params.copy()
 # fm_params["use_deep"] = False
 # y_train_fm, y_test_fm = _run_base_model_dfm(dfTrain, dfTest, folds, fm_params)

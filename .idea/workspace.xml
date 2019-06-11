@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6a1d3a5a-f03f-4bb5-ab7b-43ac5e4fcfb8" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/DCN.py" beforeDir="false" afterPath="$PROJECT_DIR$/DCN.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/fig/DeepFM.png" beforeDir="false" afterPath="$PROJECT_DIR$/example/fig/DeepFM.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/example/main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -12,15 +13,15 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/DeepAndCrossNetwork_TF$main.coverage" NAME="main Coverage Results" MODIFIED="1560221822902" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/example" />
+    <SUITE FILE_PATH="coverage/DeepAndCrossNetwork_TF$main.coverage" NAME="main Coverage Results" MODIFIED="1560258649876" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/example" />
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/example/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="266">
-              <caret line="90" column="51" lean-forward="true" selection-start-line="90" selection-start-column="51" selection-end-line="90" selection-end-column="51" />
+            <state relative-caret-position="209">
+              <caret line="86" column="54" lean-forward="true" selection-start-line="86" selection-start-column="54" selection-end-line="86" selection-end-column="54" />
               <folding>
                 <element signature="e#1#10#0" expanded="true" />
               </folding>
@@ -28,11 +29,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DCN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="253">
-              <caret line="79" column="74" lean-forward="true" selection-start-line="79" selection-start-column="74" selection-end-line="79" selection-end-column="74" />
+            <state relative-caret-position="-2378">
+              <caret line="243" column="28" selection-start-line="243" selection-start-column="28" selection-end-line="243" selection-end-column="28" />
               <folding>
                 <element signature="e#208#226#0" expanded="true" />
               </folding>
@@ -53,11 +54,16 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>feat_dim</find>
       <find>weights[&quot;feature_embeddings&quot;]</find>
       <find>dropout_keep_fm</find>
       <find>weights[&quot;cross_layer_%d&quot;</find>
+      <find>dropout_fm</find>
+      <find>feat_dim</find>
       <find>dropout_keep_deep</find>
+      <find>cate_feature_size</find>
+      <find>set_random_seed</find>
+      <find>random_seed</find>
+      <find>shuffle_in_unison_scary</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -67,16 +73,16 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/DeepAndCross.py" />
-        <option value="$PROJECT_DIR$/example/main.py" />
         <option value="$PROJECT_DIR$/DCN.py" />
+        <option value="$PROJECT_DIR$/example/main.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="43" />
-    <option name="y" value="198" />
-    <option name="width" value="1936" />
-    <option name="height" value="1056" />
+    <option name="x" value="-1448" />
+    <option name="y" value="-8" />
+    <option name="width" value="1456" />
+    <option name="height" value="876" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -182,19 +188,18 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1559746687878</updated>
-      <workItem from="1559746689078" duration="21092000" />
+      <workItem from="1559746689078" duration="28163000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="21092000" />
+    <option name="totallyTimeSpent" value="28163000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <frame x="-1448" y="-8" width="1456" height="876" extended-state="6" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.141258" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18982808" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" />
@@ -204,7 +209,7 @@
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.329718" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.4097035" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -230,22 +235,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/example/main.py">
+    <entry file="file://$PROJECT_DIR$/DCN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="90" column="51" lean-forward="true" selection-start-line="90" selection-start-column="51" selection-end-line="90" selection-end-column="51" />
+        <state relative-caret-position="-2378">
+          <caret line="243" column="28" selection-start-line="243" selection-start-column="28" selection-end-line="243" selection-end-column="28" />
           <folding>
-            <element signature="e#1#10#0" expanded="true" />
+            <element signature="e#208#226#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DCN.py">
+    <entry file="file://$PROJECT_DIR$/example/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="79" column="74" lean-forward="true" selection-start-line="79" selection-start-column="74" selection-end-line="79" selection-end-column="74" />
+        <state relative-caret-position="209">
+          <caret line="86" column="54" lean-forward="true" selection-start-line="86" selection-start-column="54" selection-end-line="86" selection-end-column="54" />
           <folding>
-            <element signature="e#208#226#0" expanded="true" />
+            <element signature="e#1#10#0" expanded="true" />
           </folding>
         </state>
       </provider>

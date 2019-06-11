@@ -17,7 +17,7 @@ from yellowfin import YFOptimizer
 
 class DCN(BaseEstimator, TransformerMixin):
     def __init__(self, cate_feature_size, cate_field_size, num_field_size,
-                 embedding_size=8, dropout_cross=[1.0, 1.0],
+                 embedding_size=8,
                  cross_layer_num=2,
                  deep_layers=[32, 32], dropout_deep=[0.5, 0.5, 0.5],
                  deep_layers_activation=tf.nn.relu,
@@ -38,7 +38,6 @@ class DCN(BaseEstimator, TransformerMixin):
         self.embedding_size = embedding_size              # denote as K, size of the feature embedding
         self.total_size = self.num_field_size + self.cate_field_size * self.embedding_size
 
-        self.dropout_cross = dropout_cross
         self.deep_layers = deep_layers
         self.dropout_deep = dropout_deep
         self.cross_layer_num = cross_layer_num
@@ -86,7 +85,7 @@ class DCN(BaseEstimator, TransformerMixin):
                                                              self.feat_index)  # None * Cate * K
             self.embeddings = tf.reshape(self.embeddings, shape=[-1, self.cate_field_size * self.embedding_size])
 
-            self.x0 = tf.concat([self.feat_index, self.embeddings], axis=1)
+            self.x0 = tf.concat([self.feat_value, self.embeddings], axis=1)
 
             # ---------- Deep component ----------
             self.y_deep = tf.nn.dropout(self.x0, self.dropout_keep_deep[0])
