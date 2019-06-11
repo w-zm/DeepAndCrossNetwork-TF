@@ -72,11 +72,10 @@ class DCN(BaseEstimator, TransformerMixin):
             tf.set_random_seed(self.random_seed)
 
             self.feat_index = tf.placeholder(tf.int32, shape=[None, None],
-                                                 name="feat_index")  # None * F
+                                                 name="feat_index")  # None * Cate
             self.feat_value = tf.placeholder(tf.float32, shape=[None, None],
-                                                 name="feat_value")  # None * F
+                                                 name="feat_value")  # None * Num
             self.label = tf.placeholder(tf.float32, shape=[None, 1], name="label")  # None * 1
-            self.dropout_keep_fm = tf.placeholder(tf.float32, shape=[None], name="dropout_keep_fm")
             self.dropout_keep_deep = tf.placeholder(tf.float32, shape=[None], name="dropout_keep_deep")
             self.train_phase = tf.placeholder(tf.bool, name="train_phase")
 
@@ -84,13 +83,13 @@ class DCN(BaseEstimator, TransformerMixin):
 
             # model
             self.embeddings = tf.nn.embedding_lookup(self.weights["feature_embeddings"],
-                                                             self.feat_index)  # None * F * K
-            feat_value = tf.reshape(self.feat_value, shape=[-1, self.cate_field_size, 1])
-            self.embeddings = tf.multiply(self.embeddings, feat_value)
+                                                             self.feat_index)  # None * Cate * K
+            self.embeddings = tf.reshape(self.embeddings, shape=[-1, self.cate_field_size * self.embedding_size])
+
+            self.x0 = tf.concat([self.feat_index, self.embeddings], axis=1)
 
             # ---------- Deep component ----------
-            self.y_deep = tf.reshape(self.embeddings, shape=[-1, self.field_size * self.embedding_size]) # None * (F*K)
-            self.y_deep = tf.nn.dropout(self.y_deep, self.dropout_keep_deep[0])
+            self.y_deep = tf.nn.dropout(self.x0, self.dropout_keep_deep[0])
             for i in range(0, len(self.deep_layers)):
                 self.y_deep = tf.add(tf.matmul(self.y_deep, self.weights["layer_%d" %i]), self.weights["bias_%d"%i]) # None * layer[i] * 1
                 if self.batch_norm:
@@ -98,11 +97,20 @@ class DCN(BaseEstimator, TransformerMixin):
                 self.y_deep = self.deep_layers_activation(self.y_deep)
                 self.y_deep = tf.nn.dropout(self.y_deep, self.dropout_keep_deep[1+i]) # dropout at each Deep layer
 
-            # ---------- DeepFM ----------
-            if self.use_fm and self.use_deep:
-                concat_input = tf.concat([self.y_first_order, self.y_second_order, self.y_deep], axis=1)
-            elif self.use_fm:
-                concat_input = tf.concat([self.y_first_order, self.y_second_order], axis=1)
+            # ---------- Cross component ----------
+            self._x0 = tf.reshape(self.x0, (-1, self.total_size, 1))
+            x_l = self._x0
+            for l in range(self.cross_layer_num):
+                x_l = tf.tensordot(tf.matmul(self._x0, x_l, transpose_b=True),
+                                   self.weights["cross_layer_%d" % l], 1) + self.weights["cross_bias_%d" % l] + x_l
+
+            self.cross_network_out = tf.reshape(x_l, (-1, self.total_size))
+
+            # ---------- output ----------
+            if self.use_cross and self.use_deep:
+                concat_input = tf.concat([self.cross_network_out, self.y_deep], axis=1)
+            elif self.use_cross:
+                concat_input = self.cross_network_out
             elif self.use_deep:
                 concat_input = self.y_deep
             self.out = tf.add(tf.matmul(concat_input, self.weights["concat_projection"]), self.weights["concat_bias"])
@@ -245,7 +253,6 @@ class DCN(BaseEstimator, TransformerMixin):
         feed_dict = {self.feat_index: Xi,
                      self.feat_value: Xv,
                      self.label: y,
-                     self.dropout_keep_fm: self.dropout_fm,
                      self.dropout_keep_deep: self.dropout_deep,
                      self.train_phase: True}
         loss, opt = self.sess.run((self.loss, self.optimizer), feed_dict=feed_dict)
@@ -353,7 +360,6 @@ class DCN(BaseEstimator, TransformerMixin):
             feed_dict = {self.feat_index: Xi_batch,
                          self.feat_value: Xv_batch,
                          self.label: y_batch,
-                         self.dropout_keep_fm: [1.0] * len(self.dropout_fm),
                          self.dropout_keep_deep: [1.0] * len(self.dropout_deep),
                          self.train_phase: False}
             batch_out = self.sess.run(self.out, feed_dict=feed_dict)

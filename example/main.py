@@ -85,8 +85,8 @@ def _run_base_model_dfm(Xi_train, Xv_train, y_train, Xi_test, Xv_test, ids_test,
     dfm_params["cate_field_size"] = len(Xi_train[0])
     dfm_params["num_field_size"] = len(Xv_train[0])
 
-    y_train_meta = np.zeros((dfTrain.shape[0], 1), dtype=float)
-    y_test_meta = np.zeros((dfTest.shape[0], 1), dtype=float)
+    y_train_meta = np.zeros((Xi_train.shape[0], 1), dtype=float)
+    y_test_meta = np.zeros((Xi_train.shape[0], 1), dtype=float)
     _get = lambda x, l: [x[i] for i in l]
     gini_results_cv = np.zeros(len(folds), dtype=float)
     gini_results_epoch_train = np.zeros((len(folds), dfm_params["epoch"]), dtype=float)
@@ -108,9 +108,9 @@ def _run_base_model_dfm(Xi_train, Xv_train, y_train, Xi_test, Xv_test, ids_test,
     y_test_meta /= float(len(folds))
 
     # save result
-    if dfm_params["use_fm"] and dfm_params["use_deep"]:
+    if dfm_params["use_cross"] and dfm_params["use_deep"]:
         clf_str = "DeepFM"
-    elif dfm_params["use_fm"]:
+    elif dfm_params["use_cross"]:
         clf_str = "FM"
     elif dfm_params["use_deep"]:
         clf_str = "DNN"
@@ -146,8 +146,9 @@ def _plot_fig(train_results, valid_results, model_name):
     plt.close()
 
 
-# load data
-dfTrain, dfTest, Xi_train, Xv_train, y_train, Xi_test, Xv_test, ids_test, cate_cnt = _load_data()
+# load data & preprocess
+train_df, test_df = _load_data()
+train_df, test_df, Xi_train, Xv_train, y_train, Xi_test, Xv_test, ids_test, cat_features_indices, feature_sizes = _preprocess_data(train_df, test_df)
 
 # folds
 folds = list(StratifiedKFold(n_splits=config.NUM_SPLITS, shuffle=True,
