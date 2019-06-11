@@ -20,3 +20,6 @@ __Very thanks to__:
 
 - https://github.com/ChenglongChen/tensorflow-DeepFM
 - Deep & Cross Network for Ad Click Predictions, Ruoxi Wang, Bin Fu, Gang Fu, Mingliang Wang.
+
+### ToDoList
+- Remove useless code.
